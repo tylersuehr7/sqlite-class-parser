@@ -1,3 +1,4 @@
+import com.tylersuehr.sqliteparser.SQLiteIgnore;
 import com.tylersuehr.sqliteparser.SQLiteParser;
 import java.util.UUID;
 
@@ -8,63 +9,23 @@ import java.util.UUID;
 public class Main {
     public static void main(String[] args) {
         SQLiteParser parser = SQLiteParser.getInstance();
-
-        String table = parser.parse(Person.class);
-        String table2 = parser.parse(Child.class);
+        String table = parser.parse(User.class);
 
         assert (table != null);
     }
 
-
-    private static class Child {
-        private UUID id;
-        private String firstName;
-        private String lastName;
-        private String parentId;
-
-
-        public Child() {}
-
-        public UUID getId() {
-            return id;
-        }
-
-        public void setId(UUID id) {
-            this.id = id;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public String getParentId() {
-            return parentId;
-        }
-
-        public void setParentId(String parentId) {
-            this.parentId = parentId;
-        }
-    }
-
-    private static class Person {
+    private static class User {
         private int id;
-        private String firstName;
-        private String lastName;
+        private String name;
+        private String email;
+        private String username;
+        private String password;
+
+        @SQLiteIgnore
+        private long indexTime;
 
 
-        private Person() {}
+        public User() {}
 
         public int getId() {
             return id;
@@ -74,20 +35,36 @@ public class Main {
             this.id = id;
         }
 
-        public String getFirstName() {
-            return firstName;
+        public String getName() {
+            return name;
         }
 
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public String getLastName() {
-            return lastName;
+        public String getEmail() {
+            return email;
         }
 
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
     }
 }

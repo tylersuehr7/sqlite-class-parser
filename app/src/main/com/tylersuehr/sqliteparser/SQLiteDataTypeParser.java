@@ -26,7 +26,6 @@ final class SQLiteDataTypeParser {
         this.dataTypes.put(Character.class, DATA_TYPE_TEXT);
         this.dataTypes.put(char.class, DATA_TYPE_TEXT);
 
-
         this.dataTypes.put(Integer.class, DATA_TYPE_INTEGER);
         this.dataTypes.put(Long.class, DATA_TYPE_INTEGER);
         this.dataTypes.put(Boolean.class, DATA_TYPE_INTEGER);

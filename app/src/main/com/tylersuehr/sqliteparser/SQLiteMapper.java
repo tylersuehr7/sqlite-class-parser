@@ -11,8 +11,8 @@ import java.util.Collection;
  */
 final class SQLiteMapper {
     private final SQLiteDataTypeParser parser = new SQLiteDataTypeParser();
-    private SQLiteColumn primaryKey = null;
-    private boolean hasForeignKey = false;
+//    private SQLiteColumn primaryKey = null;
+//    private boolean hasForeignKey = false;
     private boolean hasPrimary = false;
 
 
