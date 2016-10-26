@@ -115,4 +115,4 @@ public class Main {
 ```
 
 ### Overview of SQLiteParser Design
-![alt text](https://github.com/tylersuehr7/sqlite-class-parser/img_class_diagram.png "SQLiteParser Class Diagram")
+![alt text](https://github.com/tylersuehr7/sqlite-class-parser/blob/master/img_class_diagram.png "SQLiteParser Class Diagram")
