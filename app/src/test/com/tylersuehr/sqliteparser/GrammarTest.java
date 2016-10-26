@@ -1,7 +1,6 @@
 package com.tylersuehr.sqliteparser;
 import static org.junit.Assert.*;
 
-import com.tylersuehr.sqliteparser.Grammar;
 import org.junit.Test;
 
 /**

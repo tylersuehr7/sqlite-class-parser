@@ -9,14 +9,14 @@ import java.util.UUID;
  *
  * This will used to help us determine what SQLite data type a field should be.
  */
-final class SQLiteDataTypeParser {
-    static final String DATA_TYPE_TEXT = "TEXT";
-    static final String DATA_TYPE_INTEGER = "INTEGER";
-    static final String DATA_TYPE_REAL = "REAL";
+final class DataTypeParser {
+    private static final String DATA_TYPE_TEXT = "TEXT";
+    private static final String DATA_TYPE_INTEGER = "INTEGER";
+    private static final String DATA_TYPE_REAL = "REAL";
     private final Map<Class<?>, String> dataTypes;
 
 
-    SQLiteDataTypeParser() {
+    DataTypeParser() {
         // We map all the Java data types with the corresponding
         // SQLite data type using a HashMap
         this.dataTypes = new HashMap<>();

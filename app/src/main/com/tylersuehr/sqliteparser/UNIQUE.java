@@ -8,9 +8,8 @@ import java.lang.annotation.Target;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  *
- * This annotation will prevent the parser from reading
- * the field it is annotating.
+ * This annotates a UNIQUE SQL constraint.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface SQLiteIgnore {}
+public @interface UNIQUE {}

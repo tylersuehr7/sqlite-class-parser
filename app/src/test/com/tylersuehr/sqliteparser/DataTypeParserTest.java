@@ -7,7 +7,7 @@ import java.util.UUID;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  */
-public class SQLiteDataTypeParserTest {
+public class DataTypeParserTest {
     @Test
     public void testTextDataType() {
         Class<?>[] types = new Class<?>[] {
@@ -15,7 +15,7 @@ public class SQLiteDataTypeParserTest {
                 Character.class, char.class
         };
 
-        SQLiteDataTypeParser dataParser = new SQLiteDataTypeParser();
+        DataTypeParser dataParser = new DataTypeParser();
         for (Class<?> type : types) {
             assertEquals("TEXT", dataParser.getDataType(type));
         }
@@ -28,7 +28,7 @@ public class SQLiteDataTypeParserTest {
                 long.class, boolean.class
         };
 
-        SQLiteDataTypeParser dataParser = new SQLiteDataTypeParser();
+        DataTypeParser dataParser = new DataTypeParser();
         for (Class<?> type : types) {
             assertEquals("INTEGER", dataParser.getDataType(type));
         }
@@ -41,7 +41,7 @@ public class SQLiteDataTypeParserTest {
                 float.class, double.class, byte.class, byte[].class
         };
 
-        SQLiteDataTypeParser dataParser = new SQLiteDataTypeParser();
+        DataTypeParser dataParser = new DataTypeParser();
         for (Class<?> type : types) {
             assertEquals("REAL", dataParser.getDataType(type));
         }

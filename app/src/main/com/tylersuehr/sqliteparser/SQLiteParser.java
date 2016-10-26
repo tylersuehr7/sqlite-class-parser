@@ -1,47 +1,18 @@
 package com.tylersuehr.sqliteparser;
-import java.util.Collection;
 
 /**
  * Copyright Tyler Suehr 2016
  * Created by tyler
  *
- * This is what we will use to parse a class and create a SQL table
- * creation statement.
- *
- * <p>
- *     Example usage 1:
- *     -----------------
- *     public static void main(String[] args) {
- *          SQLiteParser parser = SQLiteParser.getInstance();
- *          parser.setColFirstUppercase(false);
- *          parser.setTableLowercase(true);
- *          parser.setTablePlural(true);
- *          parser.setFilter(true);
- *
- *          String table = parser.parse(MyEntityObject.class);
- *     }
- * </p>
- *
- * <p>
- *     Example usage 2:
- *     -----------------
- *     public static void main(String[] args) {
- *          String table = SQLiteParser.getInstance()
- *              .setColFirstUppercase(false)
- *              .setTableLowercase(true)
- *              .setTablePlural(true)
- *              .setFilter(true)
- *              .parse(MyEntityObject.class);
- *     }
- * </p>
+ * This utility will allow us to parse SQLite queries and statements easily.
  */
 public final class SQLiteParser {
     private static volatile SQLiteParser instance;
-    private final SQLiteMapper mapper = new SQLiteMapper();
-    boolean colFirstUppercase = false;
-    boolean tableLowercase = true;
-    boolean tablePlural = true;
-    boolean filter = true;
+    private final ColumnParser parser = new ColumnParser();
+    private boolean colFirstUppercase = false;
+    private boolean tableLowercase = true;
+    private boolean tablePlural = true;
+    private boolean filter = true;
 
 
     private SQLiteParser() {}
@@ -57,88 +28,100 @@ public final class SQLiteParser {
     }
 
     /**
-     * Parses a class to create a SQLite SQL table creation statement.
+     * Creates a SQLite table creation statement given a class.
      * @param type Class
-     * @return SQLite SQL table creation statement
+     * @return SQLite table creation statement
      */
-    public String parse(Class<?> type) {
+    public String parseTable(Class<?> type) {
         // Get table name
-        String className = tablePlural ? Grammar.plural(type.getSimpleName()) : type.getSimpleName();
-        className = tableLowercase ? className.toLowerCase() : className;
+        String tableName = tablePlural ? Grammar.plural(type.getSimpleName()) : type.getSimpleName();
+        tableName = tableLowercase ? tableName.toLowerCase() : tableName;
 
-        // Get table columns
-        Collection<SQLiteColumn> cols = filter ? mapper.mapFields(type) : mapper.mapAllFields(type);
-        mapper.validateColumns();
+        // Parse fields into SQLiteColumns
+        if (filter)
+            parser.parse(type);
+        else
+            parser.parseAll(type);
 
-        // Create table creation statement
+        // Start table creation statement
         StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE [").append(className).append("] (");
+        sb.append("CREATE TABLE [").append(tableName).append("] (");
 
-        // Create table columns
+        // Create normal table columns (not foreign keys)
         boolean few = false;
-        for (SQLiteColumn col : cols) {
-            sb.append(few ? "," : "").append("[");
+        for (SQLiteColumn col : parser.getFields()) {
+            sb.append(few ? ", " : "").append("[");
 
             sb.append(colFirstUppercase ? firstUppercase(col.getName()) : col.getName());
             sb.append("] ").append(col.getDataType());
-            sb.append(col.isPrimary() ? " PRIMARY KEY" : "");
+            sb.append(col.isPrimaryKey() ? " PRIMARY KEY" : "");
             sb.append(col.isUnique() ? " UNIQUE" : "");
             sb.append(col.isNotNull() ? " NOT NULL" : "");
 
             few = true;
         }
 
+        // Create foreign key table columns
+        for (SQLiteColumn col : parser.getForeignKeys()) {
+            sb.append(few ? ", " : "").append("[");
+
+            String colName = col.getName() + "Id";
+            String fkName = tablePlural ? Grammar.plural(col.getName()) : col.getName();
+            fkName = tableLowercase ? fkName.toLowerCase() : fkName;
+            String fkDataType = col.getDataType(); // Col data type is same as foreign key's
+            String fkId = colFirstUppercase ? "Id" : "id";
+
+            sb.append(colName).append("] ").append(fkDataType);
+            sb.append(col.isUnique() ? " UNIQUE" : "");
+            sb.append(col.isNotNull() ? " NOT NULL" : "");
+
+            sb.append(", ");
+            sb.append("FOREIGN KEY ([").append(colName).append("]) REFERENCES [");
+            sb.append(fkName).append("]([");
+            sb.append(fkId).append("])");
+        }
+
         sb.append(");");
         return sb.toString();
     }
 
-    /**
-     * Sets flag to make the table name all lowercase.
-     * @param value True if lowercase
-     */
-    public SQLiteParser setTableLowercase(boolean value) {
-        this.tableLowercase = value;
-        return this;
+    public boolean isColFirstUppercase() {
+        return colFirstUppercase;
+    }
+
+    public void setColFirstUppercase(boolean colFirstUppercase) {
+        this.colFirstUppercase = colFirstUppercase;
+    }
+
+    public boolean isTableLowercase() {
+        return tableLowercase;
+    }
+
+    public void setTableLowercase(boolean tableLowercase) {
+        this.tableLowercase = tableLowercase;
+    }
+
+    public boolean isTablePlural() {
+        return tablePlural;
+    }
+
+    public void setTablePlural(boolean tablePlural) {
+        this.tablePlural = tablePlural;
+    }
+
+    public boolean isFilter() {
+        return filter;
+    }
+
+    public void setFilter(boolean filter) {
+        this.filter = filter;
     }
 
     /**
-     * Sets a flag to pluralize the table name.
-     * @param value True if pluralized
+     * Makes the first character in the given text capitalized.
+     * @param text Text
+     * @return Formatted text
      */
-    public SQLiteParser setTablePlural(boolean value) {
-        this.tablePlural = value;
-        return this;
-    }
-
-    /**
-     * Sets a flag to capitalize the first letter in column names.
-     * @param value True if first letter capitalized
-     */
-    public SQLiteParser setColFirstUppercase(boolean value) {
-        this.colFirstUppercase = value;
-        return this;
-    }
-
-    /**
-     * Sets a flag to filter fields with the {@link SQLiteIgnore} annotation.
-     * @param value True if should filter
-     */
-    public SQLiteParser setFilter(boolean value) {
-        this.filter = value;
-        return this;
-    }
-
-    /**
-     * Resets all flags to their default values.
-     */
-    public SQLiteParser clearFlags() {
-        this.colFirstUppercase = false;
-        this.tableLowercase = true;
-        this.tablePlural = true;
-        this.filter = true;
-        return this;
-    }
-
     private String firstUppercase(String text) {
         char first = Character.toUpperCase(text.charAt(0));
         return (first + text.substring(1, text.length()));

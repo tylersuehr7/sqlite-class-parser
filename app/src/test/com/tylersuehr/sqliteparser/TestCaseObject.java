@@ -9,7 +9,7 @@ class TestCaseObject {
     private String name;
     private String email;
 
-    @SQLiteIgnore
+    @IGNORE
     private double money;
 
 

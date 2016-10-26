@@ -4,71 +4,35 @@ package com.tylersuehr.sqliteparser;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  *
- * This models a column in SQLite.
+ * This represents a single column in the SQLite database table.
  */
 final class SQLiteColumn {
-    private String name;
-    private String dataType;
-    private Class<?> foreignKeyClass;
-    private boolean notNull = false;
-    private boolean primary = false;
+    private boolean primaryKey = false;
     private boolean unique = false;
-    private boolean hasForeignKey = false;
+    private boolean notNull = false;
+    private String dataType;
+    private String name;
 
-
-    SQLiteColumn() {}
 
     SQLiteColumn(String name, String dataType) {
         this.name = name;
         this.dataType = dataType;
     }
 
-    Class<?> getForeignKeyClass() {
-        return foreignKeyClass;
-    }
-
-    void setForeignKeyClass(Class<?> foreignKeyClass) {
-        this.foreignKeyClass = foreignKeyClass;
-    }
-
-    boolean hasForeignKey() {
-        return hasForeignKey;
-    }
-
-    void setHasForeignKey(boolean hasForeignKey) {
-        this.hasForeignKey = hasForeignKey;
+    String getDataType() {
+        return dataType;
     }
 
     String getName() {
         return name;
     }
 
-    void setName(String name) {
-        this.name = name;
+    boolean isPrimaryKey() {
+        return primaryKey;
     }
 
-    String getDataType() {
-        return dataType;
-    }
-
-    void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    boolean isNotNull() {
-        return notNull;
-    }
-
-    void setNotNull(boolean notNull) {
-        this.notNull = notNull;
-    }
-
-    boolean isPrimary() {
-        return primary;
-    }
-
-    void setPrimary(boolean primary) {
-        this.primary = primary;
+    void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
     }
 
     boolean isUnique() {
@@ -77,5 +41,13 @@ final class SQLiteColumn {
 
     void setUnique(boolean unique) {
         this.unique = unique;
+    }
+
+    boolean isNotNull() {
+        return notNull;
+    }
+
+    void setNotNull(boolean notNull) {
+        this.notNull = notNull;
     }
 }
